@@ -1,5 +1,6 @@
 using MaquinaCafe;
 using NUnit.Framework;
+using System;
 
 namespace LabNunitMaquinaCafe
 {
@@ -89,6 +90,36 @@ namespace LabNunitMaquinaCafe
 
             //Assert
             Assert.True(response);
+        }
+
+        [TestCase(6)]
+        [TestCase(7)]
+        [TestCase(8)]
+        public void SeleccionarVaso_Seleccionar_Debe_RegresarErrorSiNoHayVasos(int tipoVaso)
+        {
+            //Arrange
+            MaquinaDeCafe maquina = new MaquinaDeCafe(100, 1000, 10, 10, 10);
+
+            //Act
+            Exception exp = Assert.Throws<Exception>(() => maquina.seleccionarVaso(tipoVaso));
+
+            //Assert
+            Assert.That(exp.Message.Length >= 0);
+        }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void SeleccionarVaso_Seleccionar_Debe_RegresarErrorSiNoHaIniciado(int tipoVaso)
+        {
+            //Arrange
+            MaquinaDeCafe maquina = new MaquinaDeCafe();
+
+            //Act
+            Exception exp = Assert.Throws<Exception>(() => maquina.seleccionarVaso(tipoVaso));
+
+            //Assert
+            Assert.That(exp.Message.Length >= 0);
         }
 
     }

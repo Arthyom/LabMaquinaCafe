@@ -64,9 +64,8 @@ namespace MaquinaCafe
                         {
                             fijarEstadoyMensaje("ok", "vaso chico seleccionado");
                             vasosPequenios--;
-                            return true;
                         }
-                        break;
+                        return true;
 
                     // vaso mediano
                     case 2:
@@ -74,9 +73,8 @@ namespace MaquinaCafe
                         {
                             fijarEstadoyMensaje("ok", "vaso mediano seleccionado");
                             vasosMedianos--;
-                            return true;
                         }
-                        break;
+                        return true;
 
                     // vaso grandes
                     case 3:
@@ -84,15 +82,17 @@ namespace MaquinaCafe
                         {
                             fijarEstadoyMensaje("ok", "vaso grande seleccionado");
                             vasosGrandes--;
-                            return true;
                         }
-                        break;
+                        return true;
 
                     default:
                         throw new Exception("Error. Vaso no existe");
                 }
             }
-            return false;
+            else
+            {
+                throw new Exception("Error no hay vasos");
+            }
         }
 
         public bool seleccionarAzucar(double azucarSeleccionada)
@@ -126,15 +126,13 @@ namespace MaquinaCafe
         #region Metodos privados
         private bool hayVasos()
         {
+            
             if (vasosGrandes > 0 && vasosMedianos > 0 && vasosPequenios > 0)
             {
                 fijarEstadoyMensaje("Ok", "vasos suficientes");
                 return true;
             }
-            else
-            {
-                throw new Exception("Error. No hay vasos");
-            }
+            return false;
         }
 
         private bool hayVaso(int tipoVaso)
