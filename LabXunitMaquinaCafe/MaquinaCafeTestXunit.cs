@@ -44,7 +44,8 @@ namespace LabXunitMaquinaCafe
 
             var fixture2 = new Fixture();
             fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100));
-            maquinaVacia = fixture2.Create<MaquinaDeCafe>();
+            maquinaLlena = fixture2.Create<MaquinaDeCafe>();
+            maquinaVacia = _fixture.Create<MaquinaDeCafe>();
         }
 
         [Fact]
