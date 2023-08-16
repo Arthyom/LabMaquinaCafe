@@ -1,11 +1,13 @@
 using System;
 using Xunit;
 using MaquinaCafe;
+using AutoFixture;
 
 namespace LabXunitMaquinaCafe
 {
     public class MaquinaCafeTestXunit:IClassFixture<MaquinaDeCafeFixture> //IDisposable
     {
+        Fixture _fixture = new Fixture();
         private MaquinaDeCafe maquinaVacia;
         private MaquinaDeCafe maquinaLlena;
         private MaquinaDeCafeFixture _maquinaCafeFixture;
@@ -16,6 +18,33 @@ namespace LabXunitMaquinaCafe
            // maquinaVacia = new MaquinaDeCafe();
            // maquinaLlena = new MaquinaDeCafe(100, 100, 100, 100, 100);
             _maquinaCafeFixture = maquinaDeCafeFixture;
+
+            //puede generar fallo debido a la los valores esperados en las pruebas
+            //cafeteraLlena = _fixture.Create<MaquinaDeCafe>();
+
+            //Se ejecuta para todos los objetos creados a partir de esta llamada
+            //_fixture.Customize<MaquinaDeCafe>(
+            //   (x) => x
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.Azucar, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.Cafe, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.VasosGrandes, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.VasosMedianos, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.VasosPequenios, 100)
+            //   );
+            //cafeteraLlena = _fixture.Create<MaquinaDeCafe>();
+
+            //produce errores dado que la propiedad no se puede asignar
+            //cafeteraLlena = _fixture.Build<MaquinaDeCafe>()
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.Azucar, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.Cafe, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosGrandes, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosMedianos, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosPequenios, 100)
+            //    .Create();
+
+            var fixture2 = new Fixture();
+            fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100));
+            maquinaVacia = fixture2.Create<MaquinaDeCafe>();
         }
 
         [Fact]

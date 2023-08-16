@@ -1,3 +1,4 @@
+using AutoFixture;
 using MaquinaCafe;
 using NUnit.Framework;
 using System;
@@ -12,6 +13,32 @@ namespace LabNunitMaquinaCafe
 
         public SetUpClass()
         {
+            //puede generar fallo debido a la los valores esperados en las pruebas
+            //cafeteraLlena = _fixture.Create<MaquinaDeCafe>();
+
+            //Se ejecuta para todos los objetos creados a partir de esta llamada
+            //_fixture.Customize<MaquinaDeCafe>(
+            //   (x) => x
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.Azucar, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.Cafe, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.VasosGrandes, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.VasosMedianos, 100)
+            //         .With(MaquinaDeCafe => MaquinaDeCafe.VasosPequenios, 100)
+            //   );
+            //cafeteraLlena = _fixture.Create<MaquinaDeCafe>();
+
+            //produce errores dado que la propiedad no se puede asignar
+            //cafeteraLlena = _fixture.Build<MaquinaDeCafe>()
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.Azucar, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.Cafe, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosGrandes, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosMedianos, 100)
+            //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosPequenios, 100)
+            //    .Create();
+
+            var fixture2 = new Fixture();
+            fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100));
+            cafeteraVacia = fixture2.Create<MaquinaDeCafe>();
         }
 
         [OneTimeSetUp]
@@ -69,6 +96,8 @@ namespace LabNunitMaquinaCafe
         {
             //  Codigo heredado 
             cafeteraLlena = new MaquinaDeCafe(3, 3, 3, 3, 3);
+
+
         }
 
         /// <summary>
