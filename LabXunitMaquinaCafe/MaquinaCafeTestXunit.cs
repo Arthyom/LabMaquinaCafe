@@ -100,7 +100,7 @@ namespace LabXunitMaquinaCafe
             //MaquinaDeCafe maquina = new MaquinaDeCafe(100, 1000, 10, 10, 10);
 
             //Act
-            bool response = maquinaLlena.servirCafe(10);
+            bool response = maquinaLlena.servir(10);
 
             //Assert
             Assert.True(response);
@@ -142,7 +142,7 @@ namespace LabXunitMaquinaCafe
             //MaquinaDeCafe maquina = new MaquinaDeCafe();
 
             //Act
-            Exception response = Assert.Throws<Exception>(() => maquinaVacia.servirCafe(1));
+            Exception response = Assert.Throws<Exception>(() => maquinaVacia.servir(1));
 
             //Assert
             Assert.NotNull(response.Message);

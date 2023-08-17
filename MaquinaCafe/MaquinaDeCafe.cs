@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using Modulos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +21,10 @@ namespace MaquinaCafe
 
         private double azucar;
 
+        private IModulo _moduloCapuchino;
+
+        private Chocolate _moduloChocolate;
+
 
         public int VasosPequenios { get { return vasosPequenios; } }
 
@@ -30,6 +36,8 @@ namespace MaquinaCafe
 
         public double Cafe { get { return cafe; } }
 
+        public IModulo InfoModuloCapuchino { get { return _moduloCapuchino; } }
+
 
         public string mensaje { get; set; }
 
@@ -39,7 +47,12 @@ namespace MaquinaCafe
         #region Constructor de la clase
         public MaquinaDeCafe() { }
 
-        public MaquinaDeCafe(double azucarInicial, double cafeInicial, int vasosPequeniosInicial, int vasosMedianosInicial, int vasosGrandesInicial)
+        public MaquinaDeCafe(double azucarInicial,
+                             double cafeInicial,
+                             int vasosPequeniosInicial,
+                             int vasosMedianosInicial,
+                             int vasosGrandesInicial,
+                             IModulo moduloCapuchino)
         {
             azucar = azucarInicial;
             cafe = cafeInicial;
@@ -48,6 +61,7 @@ namespace MaquinaCafe
             vasosGrandes = vasosGrandesInicial;
             mensaje = "ok. listo";
             estado = "ok";
+            _moduloCapuchino = moduloCapuchino;
         }
         #endregion 
 
@@ -108,7 +122,7 @@ namespace MaquinaCafe
             return false;
         }
 
-        public bool servirCafe(int cantidadCafe)
+        public bool servir(int cantidadCafe)
         {
             if (cafe > 0 && cafe >= cantidadCafe)
             {
@@ -121,12 +135,63 @@ namespace MaquinaCafe
                 throw new Exception("Error. no hay suficiente cafe");
             }
         }
+
+        public IModulo servir(double cantidadCapuchino)
+        {
+            try
+            {
+                IModulo respuesta = _moduloCapuchino.Servir(cantidadCapuchino);
+                if(respuesta.Estado == "ok")
+                {
+                    estado = "ok";
+                    mensaje = "capuchino servido";
+                    vasosGrandes -= 1;
+                    return respuesta;
+                }
+                else
+                {
+                    estado = "fallido";
+                    mensaje = "el capuchino no se pudo servir intente otra vez";
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error al servir el capuchino");
+            }
+        }
+
+        public void seleccionarTipoCapuchino(string tipoCapuchino)
+        {
+            try
+            {
+                _moduloCapuchino.Seleccionar(tipoCapuchino);
+
+                if (_moduloCapuchino.Tipo.Any())
+                {
+                    estado = "ok";
+                    mensaje = "tipo de capuchino seleccionado";
+                }
+                else
+                {
+                    estado = "fallido";
+                    mensaje = "no se puede seleccionar intente mas tarde";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error al seleccionar el tipo de capuchino");
+            }
+          
+        }
         #endregion Metodos publicos
 
         #region Metodos privados
         private bool hayVasos()
         {
-            
+
             if (vasosGrandes > 0 && vasosMedianos > 0 && vasosPequenios > 0)
             {
                 fijarEstadoyMensaje("Ok", "vasos suficientes");

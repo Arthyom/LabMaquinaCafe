@@ -1,5 +1,7 @@
 using AutoFixture;
 using MaquinaCafe;
+using Modulos;
+using Moq;
 using NUnit.Framework;
 using System;
 
@@ -8,8 +10,11 @@ namespace LabNunitMaquinaCafe
     [SetUpFixture]
     public class SetUpClass
     {
+        protected Fixture _fixture;
         protected MaquinaDeCafe cafeteraVacia;
         protected MaquinaDeCafe cafeteraLlena;
+
+        public Mock<IModulo> mockModuloCapuchino = new Mock<IModulo>();
 
         public SetUpClass()
         {
@@ -36,9 +41,12 @@ namespace LabNunitMaquinaCafe
             //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosPequenios, 100)
             //    .Create();
 
-            var fixture2 = new Fixture();
-            fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100));
-            cafeteraVacia = fixture2.Create<MaquinaDeCafe>();
+            //Creando autofixtures con un constructor con parametros
+            //var fixture2 = new Fixture();
+            //fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100, new Capuchino()));
+
+            //Creacion de un autofixture de la forma mas simple
+            //cafeteraVacia = _fixture.Create<MaquinaDeCafe>();
         }
 
         [OneTimeSetUp]
@@ -84,8 +92,8 @@ namespace LabNunitMaquinaCafe
         /// </summary>
         public Tests()
         {
-          //  Codigo heredado 
-          //  cafeteraVacia = new MaquinaDeCafe();
+            //  Codigo heredado 
+            //  cafeteraVacia = new MaquinaDeCafe();
         }
 
         /// <summary>
@@ -94,10 +102,10 @@ namespace LabNunitMaquinaCafe
         [SetUp]
         public void Setup()
         {
-            //  Codigo heredado 
-            cafeteraLlena = new MaquinaDeCafe(3, 3, 3, 3, 3);
+            //  Codigo heredado que usa una instacia directa del modulo de capuchino
+            //cafeteraLlena = new MaquinaDeCafe(3, 3, 3, 3, 3, new Modulos.Capuchino());
 
-
+            cafeteraLlena = new MaquinaDeCafe(3, 3, 3, 3, 3, mockModuloCapuchino.Object);
         }
 
         /// <summary>
@@ -159,7 +167,7 @@ namespace LabNunitMaquinaCafe
             //MaquinaDeCafe maquina = new MaquinaDeCafe(100, 1000, 10, 10, 10);
 
             //Act
-            bool response = cafeteraLlena.servirCafe(3);
+            bool response = cafeteraLlena.servir(3);
 
             //Assert
             Assert.True(response);
@@ -241,6 +249,67 @@ namespace LabNunitMaquinaCafe
 
             //Assert
             Assert.That(exp.Message.Length >= 0);
+        }
+
+        [Test]
+        public void SeleccionarCapuchino_Seleccionar_Debe_FijarValores()
+        {
+            //Codigo centralizado
+            //Arrange
+            //MaquinaDeCafe maquina = new MaquinaDeCafe();
+
+            mockModuloCapuchino.Setup(mock => mock.Seleccionar("frio"));
+            mockModuloCapuchino.SetupGet(mock => mock.Estado).Returns("ok");
+            mockModuloCapuchino.SetupGet(mock => mock.Temperatura).Returns(10);
+            mockModuloCapuchino.SetupGet(mock => mock.Tipo).Returns("ok");
+
+
+
+            //Act
+            cafeteraLlena.seleccionarTipoCapuchino("frio");
+
+            //Assert
+            Assert.That(cafeteraLlena.InfoModuloCapuchino.Temperatura, Is.EqualTo(10));
+            Assert.That(cafeteraLlena.InfoModuloCapuchino.Estado, Is.EqualTo("ok"));
+
+            mockModuloCapuchino.Verify(mock => mock.Seleccionar(It.IsAny<string>()), Times.Once);
+
+        }
+
+        [Test]
+        public void Servir_ServirCapuchino_Debe_RegresarCapuchino()
+        {
+            //Codigo centralizado
+            //Arrange
+            //MaquinaDeCafe maquina = new MaquinaDeCafe();
+            mockModuloCapuchino.Setup(mock => mock.Servir(It.IsAny<double>())).Returns(new Capuchino() { Estado = "ok"});
+
+            //Act
+            cafeteraLlena.servir(10.0);
+
+            //Assert
+            mockModuloCapuchino.Verify(mock => mock.Servir(It.IsAny<double>()), Times.Once);
+            Assert.That(cafeteraLlena.mensaje, Is.EqualTo("capuchino servido"));
+            Assert.That(cafeteraLlena.estado, Is.EqualTo("ok"));
+            Assert.That(cafeteraLlena.VasosGrandes, Is.LessThan(3));
+
+
+        }
+
+        [Test]
+        public void Servir_ServirCapuchino_Debe_RegresarError()
+        {
+            //Codigo centralizado
+            //Arrange
+            //MaquinaDeCafe maquina = new MaquinaDeCafe();
+            mockModuloCapuchino.Invocations.Clear();
+            mockModuloCapuchino.Setup(mock => mock.Servir(It.IsAny<double>())).Throws(new Exception());
+
+            //Act
+            Assert.Throws<Exception>(() => cafeteraLlena.servir(10.0));
+
+            //Assert
+            mockModuloCapuchino.Verify(mock => mock.Servir(It.IsAny<double>()), Times.Once);
         }
 
         /// <summary>
