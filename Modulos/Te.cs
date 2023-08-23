@@ -14,6 +14,8 @@ namespace Modulos
 
         public int MyPropert2 { get; set; }
 
+        public int MyProperty1 { get; set; }
+
         public string Tipo { get; set; }
 
         public string Estado { get; set; }
