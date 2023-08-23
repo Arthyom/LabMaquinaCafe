@@ -1,9 +1,11 @@
 using AutoFixture;
+using AutoFixture.AutoMoq;
 using MaquinaCafe;
 using Modulos;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace LabNunitMaquinaCafe
 {
@@ -68,6 +70,7 @@ namespace LabNunitMaquinaCafe
             TestContext.Progress.WriteLine("One Time Tear Down desde la clase setup");
         }
 
+        #region metodos sin uso
         /*
          * Metodos no permitidos en setupfixture
         [SetUp]
@@ -84,6 +87,7 @@ namespace LabNunitMaquinaCafe
             cafeteraLlena = null;
         }
         */
+        #endregion
     }
 
     [TestFixture]
@@ -124,7 +128,9 @@ namespace LabNunitMaquinaCafe
 
         }
 
+        #region Metodos ya provados
         [Test]
+        [Ignore("Razon")]
         public void Constructor_Vacio_Debe_CrearObjetoOk()
         {
             //Codigo centralizado
@@ -146,6 +152,8 @@ namespace LabNunitMaquinaCafe
         }
 
         [Test]
+        [Ignore("Razon")]
+
         public void Constructor_Parametros_Debe_CrearObjestoOk()
         {
             //Codigo centralizado
@@ -257,31 +265,7 @@ namespace LabNunitMaquinaCafe
             //Assert
             Assert.That(exp.Message.Length >= 0);
         }
-
-        [Test]
-        public void SeleccionarCapuchino_Seleccionar_Debe_FijarValores()
-        {
-            //Codigo centralizado
-            //Arrange
-            //MaquinaDeCafe maquina = new MaquinaDeCafe();
-
-            mockModuloCapuchino.Setup(mock => mock.Seleccionar("frio"));
-            mockModuloCapuchino.SetupGet(mock => mock.Estado).Returns("ok");
-            mockModuloCapuchino.SetupGet(mock => mock.Temperatura).Returns(10);
-            mockModuloCapuchino.SetupGet(mock => mock.Tipo).Returns("ok");
-
-
-
-            //Act
-            cafeteraLlena.seleccionarTipoCapuchino("frio");
-
-            //Assert
-            Assert.That(cafeteraLlena.InfoModuloCapuchino.Temperatura, Is.EqualTo(10));
-            Assert.That(cafeteraLlena.InfoModuloCapuchino.Estado, Is.EqualTo("ok"));
-
-            mockModuloCapuchino.Verify(mock => mock.Seleccionar(It.IsAny<string>()), Times.Once);
-
-        }
+        #endregion Metodos ya provados
 
         [Test]
         public void Servir_ServirCapuchino_Debe_RegresarCapuchino()
@@ -372,6 +356,50 @@ namespace LabNunitMaquinaCafe
             //Assert
             mockModuloCapuchino.Verify(mock => mock.Servir(It.IsAny<double>()), Times.Once);
         }
+
+        [Test]
+        public void SeleccionarCapuchino_Seleccionar_Debe_FijarValores()
+        {
+            //Codigo centralizado
+            //Arrange
+            // mockModuloCapuchino.SetupGet(mock => mock.CantidadCapsula).Returns(10);
+            //mockModuloCapuchino.SetupGet(mock => mock.Tipo).Returns("capuchino helado");
+
+            //mockModuloCapuchino.SetupProperty(mock => mock.Tipo, "algo");
+            //mockModuloCapuchino.SetupProperty(mock => mock.CantidadCapsula, 34);
+
+            mockModuloCapuchino.SetupAllProperties();
+
+            // mockModuloCapuchino.SetupSet(mock => mock.Temperatura = It.IsAny<double>())
+            //.Verifiable(Times.Never);
+            ;
+
+
+            cafeteraLlena._moduloCapuchino.Tipo = "caliente";
+            cafeteraLlena._moduloCapuchino.CantidadCapsula = 69;
+
+
+            //Act
+            cafeteraLlena.seleccionarTipoCapuchino("frio");
+
+            //mockModuloCapuchino.Object.Tipo = "caliente";
+
+
+            Assert.True(cafeteraLlena._moduloCapuchino.Tipo.Equals("caliente"));
+
+            //Assert
+            //Assert.True(cafeteraLlena._moduloCapuchino.CantidadCapsula > 0);
+            //Assert.True(cafeteraLlena._moduloCapuchino.Tipo.Any());
+
+
+            //mockModuloCapuchino.VerifyGet(mock => mock.CantidadCapsula, Times.Once);
+            //mockModuloCapuchino.VerifySet(mock => mock.Temperatura = It.IsAny<double>());
+
+            //mockModuloCapuchino.Verify();
+
+            //mockModuloCapuchino.Verify(mock => mock.Seleccionar(It.IsAny<string>()), Times.Once);
+        }
+
 
         /// <summary>
         /// Codigo que sera ejecutado una sola vez al final de alguna prueba

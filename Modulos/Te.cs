@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Modulos
 {
+    [ExcludeFromCodeCoverage]
     public class Te
     {
         public double Temperatura { get; set; }
-
-        public int MyProperty1 { get; set; }
-
-        public int MyPropert2 { get; set; }
 
         public string Tipo { get; set; }
 
