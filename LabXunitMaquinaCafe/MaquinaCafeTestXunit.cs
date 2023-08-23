@@ -2,6 +2,7 @@ using System;
 using Xunit;
 using MaquinaCafe;
 using AutoFixture;
+using Modulos;
 
 namespace LabXunitMaquinaCafe
 {
@@ -43,7 +44,7 @@ namespace LabXunitMaquinaCafe
             //    .Create();
 
             var fixture2 = new Fixture();
-            fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100));
+            fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100, new Capuchino(), new Chocolate(), new Te()));
             maquinaLlena = fixture2.Create<MaquinaDeCafe>();
             maquinaVacia = _fixture.Create<MaquinaDeCafe>();
         }
