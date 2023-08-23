@@ -10,6 +10,7 @@ namespace Modulos
     {
         public double Temperatura { get; set; }
 
+        public int MyProperty { get; set; }
         public string Tipo { get; set; }
 
         public string Estado { get; set; }
