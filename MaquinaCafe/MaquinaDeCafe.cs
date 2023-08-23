@@ -21,9 +21,9 @@ namespace MaquinaCafe
 
         private double azucar;
 
-        private IModulo _moduloCapuchino;
+        public IModulo _moduloCapuchino;
 
-        private IModulo _moduloChocolate;
+        public IModulo _moduloChocolate;
 
         private Te _moduloTe;
 
@@ -37,8 +37,6 @@ namespace MaquinaCafe
         public double Azucar { get { return azucar; } }
 
         public double Cafe { get { return cafe; } }
-
-        public IModulo InfoModuloCapuchino { get { return _moduloCapuchino; } }
 
 
         public string mensaje { get; set; }
@@ -71,9 +69,10 @@ namespace MaquinaCafe
             _moduloTe = moduloTe;
 
         }
-        #endregion 
+        #endregion
 
         #region Metodos publicos
+        #region Metodos nativos
         public bool seleccionarVaso(int tipoVasoSeleccionado)
         {
             if (hayVasos())
@@ -143,7 +142,9 @@ namespace MaquinaCafe
                 throw new Exception("Error. no hay suficiente cafe");
             }
         }
+        #endregion
 
+        #region Metodos de los modulos
         public IModulo servirCapuchino(double cantidadCapuchino)
         {
             try
@@ -226,17 +227,23 @@ namespace MaquinaCafe
         {
             try
             {
-                _moduloCapuchino.Seleccionar(tipoCapuchino);
-
-                if (_moduloCapuchino.Tipo.Any())
+                if (_moduloCapuchino.Tipo.Any() && _moduloCapuchino.CantidadCapsula > 0)
                 {
-                    estado = "ok";
-                    mensaje = "tipo de capuchino seleccionado";
+                    _moduloCapuchino.Seleccionar(tipoCapuchino);
+                   
+                    //comentando el set y moviendolo al mock
+                    _moduloCapuchino.Temperatura = 59;
+
+                    if (_moduloCapuchino.Tipo.Any())
+                    {
+                        estado = "ok";
+                        mensaje = "tipo de capuchino seleccionado";
+                    }
                 }
                 else
                 {
                     estado = "fallido";
-                    mensaje = "no se puede seleccionar intente mas tarde";
+                    mensaje = "no se puede seleccionar capuchino, intente mas tarde";
                 }
             }
             catch (Exception)
@@ -246,6 +253,7 @@ namespace MaquinaCafe
             }
           
         }
+        #endregion
         #endregion Metodos publicos
 
         #region Metodos privados

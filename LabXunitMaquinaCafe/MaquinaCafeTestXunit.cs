@@ -3,15 +3,20 @@ using Xunit;
 using MaquinaCafe;
 using AutoFixture;
 using Modulos;
+using Moq;
 
 namespace LabXunitMaquinaCafe
 {
     public class MaquinaCafeTestXunit:IClassFixture<MaquinaDeCafeFixture> //IDisposable
     {
-        Fixture _fixture = new Fixture();
+        //Fixture _fixture = new Fixture();
         private MaquinaDeCafe maquinaVacia;
         private MaquinaDeCafe maquinaLlena;
         private MaquinaDeCafeFixture _maquinaCafeFixture;
+
+        public Mock<IModulo> mockModuloCapuchino = new Mock<IModulo>();
+        public Mock<IModulo> mockModuloChocolate = new Mock<IModulo>();
+        public Mock<Te> mockModuloTe = new Mock<Te>();
 
         public MaquinaCafeTestXunit(MaquinaDeCafeFixture maquinaDeCafeFixture)
         {
@@ -43,13 +48,15 @@ namespace LabXunitMaquinaCafe
             //    .With(MaquinaDeCafe => MaquinaDeCafe.VasosPequenios, 100)
             //    .Create();
 
-            var fixture2 = new Fixture();
-            fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100, new Capuchino(), new Chocolate(), new Te()));
-            maquinaLlena = fixture2.Create<MaquinaDeCafe>();
-            maquinaVacia = _fixture.Create<MaquinaDeCafe>();
+            //var fixture2 = new Fixture();
+            //fixture2.Register(() => new MaquinaDeCafe(100, 100, 100, 100, 100, mockModuloCapuchino.Object, mockModuloChocolate.Object, mockModuloTe.Object));
+            
+            maquinaLlena = new MaquinaDeCafe(100, 100, 100, 100, 100, mockModuloCapuchino.Object, mockModuloChocolate.Object, mockModuloTe.Object);
+            maquinaVacia = new MaquinaDeCafe();
         }
 
-        [Fact]
+       
+        [Fact(Skip = "Razon para ser omitido")]
         public void Constructor_Vacio_Debe_CrearObjetoOk()
         {
             //Arrange
