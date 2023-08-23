@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Modulos
 {
-    public class Chocolate : IModulo
+    public class Te
     {
         public double Temperatura { get; set; }
 
@@ -16,14 +16,14 @@ namespace Modulos
 
         public double CantidadCapsula { get; set; }
 
-        public virtual IModulo Servir(double cantidad)
+        public virtual Te Servir(double cantidad)
         {
 
             if (cantidad > 0 && CantidadCapsula >= cantidad)
             {
                 CantidadCapsula -= cantidad;
 
-                return new Capuchino() { Tipo = Tipo, Temperatura = Temperatura, Estado = Estado };
+                return new Te() { Tipo = Tipo, Temperatura = Temperatura, Estado = Estado };
             }
             else
             {

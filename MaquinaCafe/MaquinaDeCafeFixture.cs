@@ -13,7 +13,7 @@ namespace MaquinaCafe
 
         public MaquinaDeCafeFixture()
         {
-            maquinaLlena = new MaquinaDeCafe(100, 100, 100, 100, 100, new Modulos.Capuchino());
+            maquinaLlena = new MaquinaDeCafe(100, 100, 100, 100, 100, new Modulos.Capuchino(), new Modulos.Chocolate(), new Modulos.Te());
             maquinaVacia = new MaquinaDeCafe();
         }
 

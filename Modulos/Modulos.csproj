@@ -45,6 +45,7 @@
     <Compile Include="Chocolate.cs" />
     <Compile Include="IModulo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Te.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

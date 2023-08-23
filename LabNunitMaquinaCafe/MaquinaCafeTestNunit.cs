@@ -14,7 +14,13 @@ namespace LabNunitMaquinaCafe
         protected MaquinaDeCafe cafeteraVacia;
         protected MaquinaDeCafe cafeteraLlena;
 
+        /// mocking de una propiedad
         public Mock<IModulo> mockModuloCapuchino = new Mock<IModulo>();
+        public Mock<IModulo> mockModuloChocolate = new Mock<IModulo>();
+        public Mock<Te> mockModuloTe = new Mock<Te>();
+
+        /// repositorio para centralizar los mocks 
+        public MockRepository repoMock = new MockRepository(MockBehavior.Default);
 
         public SetUpClass()
         {
@@ -105,7 +111,8 @@ namespace LabNunitMaquinaCafe
             //  Codigo heredado que usa una instacia directa del modulo de capuchino
             //cafeteraLlena = new MaquinaDeCafe(3, 3, 3, 3, 3, new Modulos.Capuchino());
 
-            cafeteraLlena = new MaquinaDeCafe(3, 3, 3, 3, 3, mockModuloCapuchino.Object);
+            cafeteraLlena = new MaquinaDeCafe
+                (3, 3, 3, 3, 3, mockModuloCapuchino.Object, mockModuloChocolate.Object, mockModuloTe.Object);
         }
 
         /// <summary>
@@ -282,14 +289,68 @@ namespace LabNunitMaquinaCafe
             //Codigo centralizado
             //Arrange
             //MaquinaDeCafe maquina = new MaquinaDeCafe();
-            mockModuloCapuchino.Setup(mock => mock.Servir(It.IsAny<double>())).Returns(new Capuchino() { Estado = "ok"});
+
+            //Usando una verificacion explicita
+            //mockModuloCapuchino.Setup(mock => mock.Servir(It.IsAny<double>())).Returns(new Capuchino() { Estado = "ok"});
+            //mockModuloChocolate.Setup(mock => mock.Servir(It.IsAny<double>())).Returns(new Capuchino() { Estado = "ok" });
+
+            //Usando una verificacion implicita}
+
+            //Comentado para usar el mock repo
+            //mockModuloCapuchino.Setup(mock => mock.Servir(It.IsAny<double>()))
+            //    .Callback((double x) => TestContext.Progress.WriteLine($"ejecutando codigo despues del setup cuando se sirve capuchino {x}"))
+            //    .Returns(new Capuchino() { Estado = "ok" })
+            //    .Verifiable();
+
+            //mockModuloChocolate.Setup(mock => mock.Servir(It.IsAny<double>()))
+            //    .Callback((double x) =>
+            //    {
+            //        TestContext.Progress.WriteLine($"ejecutando codigo despues del setup cuando se sirve chocolate {x}");
+            //        //if (x >= 10) throw new Exception("Error controlado por un callback");
+            //    })
+
+            //    .Returns(new Chocolate() { Estado = "ok" })
+            //    .Verifiable();
+
+
+            //mockModuloTe.Setup(mock => mock.Servir(It.IsAny<double>()))
+            //    .Callback((double x) => TestContext.Progress.WriteLine($"ejecutando codigo despues del setup cuando se sirve capuchino {x}"))
+            //    .Returns(new Capuchino() { Estado = "ok" })
+            //    .Verifiable();
+
+            var mCap = repoMock.Create<IModulo>();
+            mCap.Setup((mock) => mock.Servir(It.IsAny<double>())).Returns(new Capuchino() { Estado = "ok" });
+
+            var mCho = repoMock.Create<Chocolate>();
+            mCho.Setup((mock) => mock.Servir(It.IsAny<double>())).Returns(new Chocolate() { Estado = "ok" });
+
+            var mTe = repoMock.Create<Te>();
+            mTe.Setup((mock) => mock.Servir(It.IsAny<double>())).Returns(new Te() { Estado = "ok" });
+
+
+
+            cafeteraLlena = new MaquinaDeCafe
+               (3, 3, 3, 3, 3, mCap.Object, mCho.Object, mTe.Object);
 
             //Act
-            cafeteraLlena.servir(10.0);
+            cafeteraLlena.servirCapuchino(10.0);
+            cafeteraLlena.servirChocolate(10.0);
+            cafeteraLlena.servirTe(10.0);
+
+
 
             //Assert
-            mockModuloCapuchino.Verify(mock => mock.Servir(It.IsAny<double>()), Times.Once);
-            Assert.That(cafeteraLlena.mensaje, Is.EqualTo("capuchino servido"));
+            //Verificacion explicita
+            //mockModuloCapuchino.Verify(mock => mock.Servir(It.IsAny<double>()), Times.Once);
+
+            //Verificacion implicita
+            //mockModuloCapuchino.Verify();
+            //mockModuloChocolate.Verify();
+
+            //Verificacion implicita via mock
+            Mock.VerifyAll();
+            Mock.Verify(mockModuloCapuchino, mockModuloChocolate, mockModuloTe);
+
             Assert.That(cafeteraLlena.estado, Is.EqualTo("ok"));
             Assert.That(cafeteraLlena.VasosGrandes, Is.LessThan(3));
 
@@ -306,7 +367,7 @@ namespace LabNunitMaquinaCafe
             mockModuloCapuchino.Setup(mock => mock.Servir(It.IsAny<double>())).Throws(new Exception());
 
             //Act
-            Assert.Throws<Exception>(() => cafeteraLlena.servir(10.0));
+            Assert.Throws<Exception>(() => cafeteraLlena.servirCapuchino(10.0));
 
             //Assert
             mockModuloCapuchino.Verify(mock => mock.Servir(It.IsAny<double>()), Times.Once);

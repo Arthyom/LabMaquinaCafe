@@ -23,7 +23,9 @@ namespace MaquinaCafe
 
         private IModulo _moduloCapuchino;
 
-        private Chocolate _moduloChocolate;
+        private IModulo _moduloChocolate;
+
+        private Te _moduloTe;
 
 
         public int VasosPequenios { get { return vasosPequenios; } }
@@ -52,7 +54,10 @@ namespace MaquinaCafe
                              int vasosPequeniosInicial,
                              int vasosMedianosInicial,
                              int vasosGrandesInicial,
-                             IModulo moduloCapuchino)
+                             IModulo moduloCapuchino,
+                             IModulo moduloChocolate,
+                             Te moduloTe
+                             )
         {
             azucar = azucarInicial;
             cafe = cafeInicial;
@@ -62,6 +67,9 @@ namespace MaquinaCafe
             mensaje = "ok. listo";
             estado = "ok";
             _moduloCapuchino = moduloCapuchino;
+            _moduloChocolate = moduloChocolate;
+            _moduloTe = moduloTe;
+
         }
         #endregion 
 
@@ -136,7 +144,7 @@ namespace MaquinaCafe
             }
         }
 
-        public IModulo servir(double cantidadCapuchino)
+        public IModulo servirCapuchino(double cantidadCapuchino)
         {
             try
             {
@@ -159,6 +167,58 @@ namespace MaquinaCafe
             {
 
                 throw new Exception("Error al servir el capuchino");
+            }
+        }
+
+        public IModulo servirChocolate(double cantidadChocolate)
+        {
+            try
+            {
+                IModulo respuesta = _moduloChocolate.Servir(cantidadChocolate);
+                if (respuesta.Estado == "ok")
+                {
+                    estado = "ok";
+                    mensaje = "chocolate servido";
+                    vasosGrandes -= 1;
+                    return respuesta;
+                }
+                else
+                {
+                    estado = "fallido";
+                    mensaje = "el chocolate no se pudo servir intente otra vez";
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error al servir el chocolate");
+            }
+        }
+
+        public Te servirTe(double cantidadTe)
+        {
+            try
+            {
+                Te respuesta =  _moduloTe.Servir(cantidadTe);
+                if (respuesta.Estado == "ok")
+                {
+                    estado = "ok";
+                    mensaje = "chocolate te";
+                    vasosGrandes -= 1;
+                    return respuesta;
+                }
+                else
+                {
+                    estado = "fallido";
+                    mensaje = "el te no se pudo servir intente otra vez";
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error al servir el te");
             }
         }
 
