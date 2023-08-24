@@ -14,6 +14,7 @@ namespace Modulos
 
         public string Tipo { get; set; }
 
+        public int MyProperty { get; set; }
         public string Estado { get; set; }
 
         public double CantidadCapsula { get; set; }
